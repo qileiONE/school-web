@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>=====教育SDK开发者DEMO===</title>
-  <!-- 引入样式 -->
+  <title>--先知class--</title>
+  <!-- 引入样式 --> 
   <link rel="stylesheet" href="libs/thirdpart/elementui/index.css">
   <script src="libs/thirdpart/vue.js"></script>
 
@@ -42,7 +42,7 @@
 
     .im-log-box {
       width: 100%;
-      height: 100%;
+      height: 300px;
       border: 1px solid #999;
       margin: 0px;
       box-sizing: border-box;
@@ -51,18 +51,18 @@
     }
 
     .im-log-box li {
-      margin: 2px 5px;
+      margin: 2px 2px;
       font-size: 14px;
       color: #666;
     }
 
     #video_wrap {
-      height: 100px;
+      height: 140px;
       display: flex;
     }
 
     #video_wrap>div {
-      width: 134px;
+      width: 160px;
       height: 100%;
     }
 
@@ -101,9 +101,10 @@
     }
 
     .version-info {
-      font-size: 14px;
+      font-size: 8px;
       color: #606266;
     }
+
   </style>
 
 
@@ -115,26 +116,30 @@
     <el-container style="display: none;" v-show="isShow">
 
       <!--左边栏  -->
-      <el-aside width="300px">
+      <el-aside width="220px">
 
         <!-- 左边栏 用户登录和登出 -->
         <el-row>
           <el-col>
             <el-tabs type="border-card">
               <el-tab-pane label="账号">
-                <el-form ref="form" label-width="80px" size="mini">
-                  <el-form-item label="用户名">
+                <el-form ref="form" label-width="60px" size="mini">
+                  <el-form-item label="用户">
                     <el-select :disabled="status >= STATUS_LOGINED" v-model="account" placeholder="请选择帐号">
                       <el-option v-for="user in users" v-bind:value="user.userId" v-text="user.userId"></el-option>
                     </el-select>
                   </el-form-item>
 
-                  <el-form-item>
-                    <el-button @click="start" :disabled="status >= STATUS_LOGINED" v-text="'登录'"></el-button>
+                  <el-form-item label="密码">
+                      <el-input placeholder="******"></el-input>
                   </el-form-item>
 
                   <el-form-item>
-                    <el-button @click="logout" :disabled="status < STATUS_LOGINED" v-text="'登 出'"></el-button>
+                    <el-button @click="start" :disabled="status >= STATUS_LOGINED" v-text="'登录'"></el-button>
+                  <!--</el-form-item>
+
+                  <el-form-item>-->
+                    <el-button @click="logout" :disabled="status < STATUS_LOGINED" v-text="'退出'"></el-button>
                   </el-form-item>
                 </el-form>
               </el-tab-pane>
@@ -150,32 +155,68 @@
             <el-tabs type="border-card">
               <!--右边栏 涂鸦操作 -->
               <el-tab-pane label="课堂">
-                <el-form ref="form" label-width="80px" size="mini">
+                <el-form ref="form" label-width="60px" size="mini">
 
-                  <el-form-item label="课堂号">
-                    <el-input id="roomid" v-model.trim="roomID" placeholder="课堂ID"></el-input>
+                  <el-form-item label="课堂ID">
+                    <el-input id="roomid" v-model.trim="roomID" placeholder="请输入课堂ID"></el-input>
                   </el-form-item>
 
                   <el-form-item>
                     <el-button @click="createClassroom" :disabled="status < STATUS_LOGINED || status == STATUS_INCLASS"
-                      v-text="'创建房间'"></el-button>
-                  </el-form-item>
+                      v-text="'创建'"></el-button>
+                  <!--</el-form-item>
 
-                  <el-form-item>
-                    <el-button @click="destroyClassroom" :disabled="status < STATUS_LOGINED" v-text="'销毁房间'">
+                  <el-form-item>-->
+                    <el-button @click="destroyClassroom" :disabled="status < STATUS_LOGINED" v-text="'销毁'">
                     </el-button>
                   </el-form-item>
 
                   <el-form-item>
                     <el-button @click="joinClassroom" :disabled="status < STATUS_LOGINED || status == STATUS_INCLASS"
-                      v-text="'进入房间'"></el-button>
-                  </el-form-item>
+                      v-text="'进入'"></el-button>
+                  <!--</el-form-item>
 
-                  <el-form-item>
-                    <el-button @click="quitClassroom()" :disabled="status < STATUS_LOGINED" v-text="'退出房间'">
+                  <el-form-item>-->
+                    <el-button @click="quitClassroom()" :disabled="status < STATUS_LOGINED" v-text="'退出'">
                     </el-button>
                   </el-form-item>
                 </el-form>
+              </el-tab-pane>
+            </el-tabs>
+          </el-col>
+        </el-row>
+
+        <el-row>
+         <el-col>
+            <el-tabs type="border-card">
+              <el-tab-pane label="消息">
+                <el-form ref="form" label-width="60px" size="mini">
+                    <el-form-item label="联系人">
+                      <el-input v-model="imMsg.common.toUser" placeholder="请输入联系人ID"></el-input>
+                  </el-form>
+                <el-form ref="form" label-width="0px" size="mini">
+                  <el-form-item>
+                   
+                  <ul id="msg_box" class="im-log-box">
+                    <li v-for="msg in msgs">
+                      <span class="send">{{msg.time}}</span>
+                      <span class="send">{{msg.send}}</span>
+                      <span class="content">{{msg.content}}</span>
+                    </li>
+                  </ul>
+
+                </el-form-item>
+                </el-form>
+
+                  <el-form :inline="true" class="demo-form-inline" size="mini">
+                    <el-form-item>
+                      <el-input v-model="imMsg.common.data" placeholder="请输入消息"></el-input>
+                    <!--</el-form-item>
+                    <el-form-item>-->
+                      <el-button type="primary" @click="sendMsg">发送</el-button>
+                    </el-form-item>
+                  </el-form>
+
               </el-tab-pane>
             </el-tabs>
           </el-col>
@@ -203,14 +244,14 @@
         <el-container>
 
           <!--中间区  视频区 -->
-          <el-header style="height: 100px">
+          <el-header style="height: 200px">
             <el-container>
               <el-header style="height: 42px;">
-                <el-button plain @click="startRTC" type="button" :disabled="status < STATUS_INCLASS" v-text="'摄像头推流'"
+                <el-button plain @click="startRTC" type="button" :disabled="status < STATUS_INCLASS" v-text="'打开摄像头'"
                   size="mini"></el-button>
                 <el-button plain @click="pushScreen" :disabled="status < STATUS_INCLASS" v-text="'屏幕分享'" size="mini">
                 </el-button>
-                <el-button @click="stopPush" v-if="isPushing === 1" size="mini">停止推流</el-button>
+                <el-button @click="stopPush" v-if="isPushing === 1" size="mini">关闭摄像头</el-button>
 
                 <template v-if="isPushing === 1">
                   <el-button @click="toggleCamera" size="mini">{{enableCamera ? '关闭': '打开'}}摄像头/屏幕分享</el-button>
@@ -237,7 +278,7 @@
               <el-main>
                 <div id="paint_box" style="background-color: rgb(240, 240, 240);"></div>
               </el-main>
-              <el-footer style="height: 80px;">
+              <el-footer style="height: 60px;">
                 <div style="text-align: center; padding-top: 30px; color: gray;" v-if="thumbUrls.length == 0">此文件不支持缩略图</div> 
                 <div style="overflow-x: scroll visible; overflow-y:hidden; white-space:nowrap; height:inherit; ">
                     <img style="height: 100%; margin-right: 3px;" v-for="(item, index) in thumbUrls" :name="index" :src="item" v-on:click="onThumbClick(index)"><img>
@@ -247,8 +288,8 @@
           </el-main>
 
 
-          <!--中间区  信息区 -->
-          <el-footer style="height: 200px;margin-top: 1px;">
+          <!--中间区  信息区
+          <el-footer style="height: 150px;margin-top: 1px;">
             <el-container>
               <el-main>
                 <ul id="msg_box" class="im-log-box">
@@ -275,19 +316,19 @@
                 </el-row>
               </el-footer>
             </el-container>
-          </el-footer>
+          </el-footer> -->
 
         </el-container>
       </el-main>
 
       <!--右边栏  -->
-      <el-aside width="340px">
+      <el-aside width="300px">
         <el-tabs type="border-card">
 
           <!--右边栏 涂鸦操作 -->
           <el-tab-pane label="涂鸦">
 
-            <el-form ref="form" label-width="100px" size="mini">
+            <el-form ref="form" label-width="80px" size="mini">
               <el-form-item>
                 <el-checkbox @change="onSetDrawEnable" v-model.boolean="drawEnable">允许涂鸦</el-checkbox>
               </el-form-item>
@@ -350,27 +391,27 @@
 
               <el-form-item label="设置背景">
                 <el-select placeholder="工具" v-model="backgroundImage" @change="onSetBackgroundImage">
-                  <el-option label="美图1"
+                  <el-option label="图片1"
                     v-bind:value="'https://main.qcloudimg.com/raw/36d31e0d6f9d24a9b5727ab5e21b4b8c.jpg'"></el-option>
-                  <el-option label="美图2"
+                  <el-option label="图片2"
                     v-bind:value="'https://main.qcloudimg.com/raw/a748528fecffd13a466a3a6c23ad1f45.jpg'"></el-option>
-                  <el-option label="美图3"
+                  <el-option label="图片3"
                     v-bind:value="'https://main.qcloudimg.com/raw/5e3f50336b85071ef09affcd967e679d.jpg'"></el-option>
-                  <el-option label="美图4"
+                  <el-option label="图片4"
                     v-bind:value="'https://main.qcloudimg.com/raw/4a897d60a49ae211f6e492f6ebe8340f.jpg'"></el-option>
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="设置H5背景">
+              <el-form-item label="设置背景">
                 <el-select placeholder="工具" v-model="backgroundImageH5" @change="onSetBackgroundH5">
-                  <el-option label="QQ" v-bind:value="'https://www.qq.com/'"></el-option>
-                  <el-option label="腾讯云" v-bind:value="'https://cloud.tencent.com'"></el-option>
+                  <el-option label="百度" v-bind:value="'https://www.baidu.com/'"></el-option>
+                  <el-option label="谷歌" v-bind:value="'https://www.google.com'"></el-option>
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="添加图片资源">
+              <el-form-item label="图片资源">
                   <el-select placeholder="图片url"  @change="onAddImageElement">
-                    <el-option label="腾讯云" v-bind:value="'https://tic-res-1259648581.cos.ap-shanghai.myqcloud.com/demo/qcloud.jpg'"></el-option>
+                    <el-option label="先知" v-bind:value="'https://image.baidu.com/search/detail?ct=503316480&z=0&ipn=d&word=%E5%85%88%E7%9F%A5%E5%9B%BE%E7%89%87&step_word=&hs=2&pn=17&spn=0&di=111980&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&istype=0&ie=utf-8&oe=utf-8&in=&cl=2&lm=-1&st=undefined&cs=154969856%2C2073067174&os=1353912925%2C476369521&simid=3355843960%2C251650769&adpicid=0&lpn=0&ln=937&fr=&fmq=1582787222622_R&fm=&ic=undefined&s=undefined&hd=undefined&latest=undefined&copyright=undefined&se=&sme=&tab=0&width=undefined&height=undefined&face=undefined&ist=&jit=&cg=&bdtype=0&oriquery=&objurl=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01f9ec5900b938a801214550d2276e.jpg%401280w_1l_2o_100sh.jpg&fromurl=ippr_z2C%24qAzdH3FAzdH3Fooo_z%26e3Bzv55s_z%26e3Bv54_z%26e3BvgAzdH3Fo56hAzdH3FZM3E8N3M9NzI%3D_z%26e3Bip4s&gsm=13&rpstart=0&rpnum=0&islist=&querylist=&force=undefined'"></el-option>
                   </el-select>
                 </el-form-item>
             </el-form>
